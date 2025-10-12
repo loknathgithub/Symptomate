@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: Symptomate
+Version: 0.0.0
+Author: Loknath Saha
+Author-email: loknathsaha2004@gmail.com
+License-File: LICENSE
+Dynamic: author
+Dynamic: author-email
+Dynamic: license-file
