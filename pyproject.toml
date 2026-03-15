@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Symptomate"
+version = "0.0.0"
+authors = [
+    { name = "Loknath Saha", email = "loknathsaha2004@gmail.com" }
+]
+
+[tool.setuptools.packages.find]
+where = ["."]

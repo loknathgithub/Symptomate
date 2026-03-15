@@ -1,4 +1,6 @@
 LICENSE
+README.md
+pyproject.toml
 setup.py
 Symptomate.egg-info/PKG-INFO
 Symptomate.egg-info/SOURCES.txt
