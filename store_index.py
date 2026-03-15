@@ -7,15 +7,8 @@ from langchain_pinecone import PineconeVectorStore
 
 load_dotenv()
 
-
 PINECONE_API_KEY=os.environ.get('PINECONE_API_KEY')
-# OPENAI_API_KEY=os.environ.get('OPENAI_API_KEY')
 GEMINI_API_KEY=os.environ.get('GEMINI_API_KEY')
-
-os.environ["PINECONE_API_KEY"] = PINECONE_API_KEY
-# os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
-os.environ["GOOGLE_API_KEY"] = GEMINI_API_KEY
-
 
 extracted_data=load_pdf_file(data='data/')
 filter_data = filter_to_minimal_docs(extracted_data)
@@ -23,10 +16,7 @@ text_chunks=text_split(filter_data)
 
 embeddings = download_hugging_face_embeddings()
 
-pinecone_api_key = PINECONE_API_KEY
-pc = Pinecone(api_key=pinecone_api_key)
-
-
+pc = Pinecone(api_key=PINECONE_API_KEY)
 
 index_name = "symptomate" 
 
@@ -39,7 +29,6 @@ if not pc.has_index(index_name):
     )
 
 index = pc.Index(index_name)
-
 
 docsearch = PineconeVectorStore.from_documents(
     documents=text_chunks,
