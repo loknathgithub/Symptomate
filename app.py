@@ -1,67 +1,61 @@
-from flask import Flask, render_template, jsonify, request
-from src.helper import download_hugging_face_embeddings
-from langchain_pinecone import PineconeVectorStore
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough
-from langchain_core.output_parsers import StrOutputParser
-from dotenv import load_dotenv
-from src.prompt import *
 import os
-
-app = Flask(__name__)
+import chainlit as cl
+from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
+from dotenv import load_dotenv
+from src.retriever import build_retriever
+from src.pipeline import run_gen_val_pipeline
 
 load_dotenv()
 
-PINECONE_API_KEY = os.environ.get('PINECONE_API_KEY')
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
+GROQ_API_KEY1   = os.environ.get('GROQ_API_KEY1')
+GROQ_API_KEY2   = os.environ.get('GROQ_API_KEY2')
+HF_TOKEN       = os.environ.get('HF_TOKEN')
+HF_REPO        = "your-username/symptomate-index"
 
-embeddings = download_hugging_face_embeddings()
-
-def format_docs(docs):
-    return "\n\n".join(doc.page_content for doc in docs)
-
-INDEX_NAME = "symptomate"
-
-docsearch = PineconeVectorStore.from_existing_index(
-    index_name=INDEX_NAME,
-    embedding=embeddings
+generator_llm = ChatGroq(
+    model="llama-3.3-70b-versatile",
+    api_key=GROQ_API_KEY1
 )
 
-retriever = docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
-
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=GEMINI_API_KEY)
-
-prompt = ChatPromptTemplate.from_messages([
-    ("system", system_prompt),
-    ("human", "{input}"),
-])
-
-rag_chain = (
-    {
-        "context": retriever | format_docs,
-        "input": RunnablePassthrough()
-    }
-    | prompt
-    | llm
-    | StrOutputParser()
+validator_llm = ChatGroq(
+    model="llama-3.3-70b-versatile",
+    api_key=GROQ_API_KEY2
 )
 
-
-@app.route("/")
-def index():
-    return render_template('chat.html')
+_retriever = None
 
 
-@app.route("/get", methods=["GET", "POST"])
-def chat():
-    msg = request.form.get("msg", "")
-    if not msg:
-        return jsonify({"error": "Empty message"}), 400
+@cl.on_chat_start
+async def start():
+    global _retriever
 
-    response = rag_chain.invoke(msg)  # ← pass string directly, not a dict
-    return str(response)
+    if _retriever is None:
+        loading = await cl.Message(content="⏳ Loading documents, please wait...").send()
+        _retriever = await cl.make_async(build_retriever)(HF_REPO, HF_TOKEN)
+        await loading.remove()
+
+    cl.user_session.set("retriever", _retriever)
+
+    await cl.Message(
+        content="👋 Hi! I'm Symptomate. Describe your symptoms and I'll help you.",
+        author="Symptomate"
+    ).send()
 
 
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8091, debug=True)
+@cl.on_message
+async def main(message: cl.Message):
+    retriever = cl.user_session.get("retriever")
+
+    msg = cl.Message(content="")
+    await msg.send()
+
+    await run_gen_val_pipeline(
+        question=message.content,
+        retriever=retriever,
+        generator_llm=generator_llm,
+        validator_llm=validator_llm,
+        msg=msg
+    )
+
+    await msg.update()

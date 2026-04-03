@@ -1,0 +1,31 @@
+/* Primary color to green — medical feel */
+:root {
+    --primary: #2ECC71 !important;
+}
+
+/* Hide default chainlit logo/name in header */
+header[data-testid="header"] img {
+    display: none;
+}
+
+/* Inject Symptomate as header text */
+header[data-testid="header"]::before {
+    content: "🩺 Symptomate";
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2ECC71;
+    margin-left: 1rem;
+}
+
+
+/* Avatar next to AI messages */
+[data-testid="author-avatar"] {
+    background-image: url("/public/avatar.png") !important;
+    background-size: cover !important;
+    background-color: transparent !important;
+}
+
+/* Hide the default icon inside avatar */
+[data-testid="author-avatar"] svg {
+    display: none;
+}
