@@ -1,8 +1,15 @@
 Metadata-Version: 2.4
 Name: Symptomate
 Version: 0.0.0
-Author: Loknath Saha
 Author-email: Loknath Saha <loknathsaha2004@gmail.com>
 License-File: LICENSE
-Dynamic: author
+Requires-Dist: chainlit>=2.10.1
+Requires-Dist: huggingface-hub>=1.9.0
+Requires-Dist: langchain>=1.2.15
+Requires-Dist: langchain-community>=0.4.1
+Requires-Dist: langchain-openai>=1.1.12
+Requires-Dist: langchain-text-splitters>=1.1.1
+Requires-Dist: pypdf>=6.9.2
+Requires-Dist: python-dotenv>=1.2.2
+Requires-Dist: rank-bm25>=0.2.2
 Dynamic: license-file

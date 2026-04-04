@@ -16,8 +16,10 @@ async def run_gen_val_pipeline(
     validator_llm,
     msg: cl.Message
 ):
+    print("inside: pipeline.py")
     docs = retriever.invoke(question)
     context = format_docs(docs)
+    print(f"DEBUG: Context sent to LLM:\n{context}")
 
     # ── Round 1: Generate (hidden) ───────────────────────────────────────────
     async with cl.Step(name="⚙️ Generation 1", show_input=False) as step1:

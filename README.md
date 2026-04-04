@@ -13,36 +13,34 @@ Project repo: https://github.com/
 ### STEP 01- Create a conda environment after opening the repository
 
 ```bash
-conda create -n symptomate python=3.10 -y
+uv init(if no project.toml)
+uv venv(create venv)
 ```
 
 ```bash
-conda activate symptomate
+.venv\Scripts\activate
 ```
 
 
 ### STEP 02- install the requirements
 ```bash
-pip install -r requirements.txt
+uv add <packages>
 ```
 
 
 ### Create a `.env` file in the root directory and add your Pinecone & openai credentials as follows:
 
 ```ini
-PINECONE_API_KEY = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-OPENAI_API_KEY = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+GROQ_API_KEY1=
+GROQ_API_KEY2=
+GROQ_BASE_URL=https://api.groq.com/openai/v1
+HF_TOKEN=
 ```
 
-
-```bash
-# run the following command to store embeddings to pinecone
-python store_index.py
-```
 
 ```bash
 # Finally run the following command
-python app.py
+chainlit run app.py
 ```
 
 Now,
@@ -57,5 +55,5 @@ open up localhost:
 - LangChain
 - Flask
 - GPT
-- Pinecone
+- BMIndex
 

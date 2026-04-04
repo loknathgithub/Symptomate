@@ -10,6 +10,7 @@ INDEX_CACHE = "bm25_index.pkl"
 
 
 def build_retriever(hf_repo: str, hf_token: str) -> BM25Retriever:
+    print("inside: build retriever")
     # 1. Local cache
     if os.path.exists(INDEX_CACHE):
         print("✅ Loading from local cache...")
@@ -34,12 +35,12 @@ def build_retriever(hf_repo: str, hf_token: str) -> BM25Retriever:
     print("⏳ Building index from PDFs (first time only)...")
     docs = PyPDFDirectoryLoader(PDF_DIR).load()
     chunks = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=50
+        chunk_size=1500,
+        chunk_overlap=300
     ).split_documents(docs)
 
     retriever = BM25Retriever.from_documents(chunks)
-    retriever.k = 3
+    retriever.k = 9
 
     # Save locally
     with open(INDEX_CACHE, "wb") as f:

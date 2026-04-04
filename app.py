@@ -1,25 +1,29 @@
 import os
 import chainlit as cl
-from langchain_groq import ChatGroq
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 from src.retriever import build_retriever
 from src.pipeline import run_gen_val_pipeline
 
 load_dotenv()
 
+print("Here we go...")
+
 GROQ_API_KEY1   = os.environ.get('GROQ_API_KEY1')
 GROQ_API_KEY2   = os.environ.get('GROQ_API_KEY2')
+GROQ_BASE_URL   = os.environ.get('GROQ_BASE_URL')
 HF_TOKEN       = os.environ.get('HF_TOKEN')
-HF_REPO        = "your-username/symptomate-index"
+HF_REPO        = "LoknathSaha2004/symptomate-index"
 
-generator_llm = ChatGroq(
+generator_llm = ChatOpenAI(
     model="llama-3.3-70b-versatile",
+    base_url=GROQ_BASE_URL,
     api_key=GROQ_API_KEY1
 )
 
-validator_llm = ChatGroq(
+validator_llm = ChatOpenAI(
     model="llama-3.3-70b-versatile",
+    base_url=GROQ_BASE_URL,
     api_key=GROQ_API_KEY2
 )
 
@@ -28,6 +32,7 @@ _retriever = None
 
 @cl.on_chat_start
 async def start():
+    print("inside: start app.py")
     global _retriever
 
     if _retriever is None:
@@ -45,6 +50,7 @@ async def start():
 
 @cl.on_message
 async def main(message: cl.Message):
+    print("inside: main app.py")
     retriever = cl.user_session.get("retriever")
 
     msg = cl.Message(content="")
