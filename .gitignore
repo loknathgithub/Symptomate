@@ -1,3 +1,28 @@
-# Ignore environment files
+# 🔐 Environment
 .env
 *.env
+
+# 🧠 VS Code
+.vscode/
+
+# 🐍 Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+
+# 📦 Virtual env
+.venv/
+venv/
+
+# 📊 Data / models
+*.pkl
+*.joblib
+
+# 🧾 Logs
+*.log
+
+# 💻 OS
+.DS_Store
+Thumbs.db
